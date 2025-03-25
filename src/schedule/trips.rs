@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use super::{Route, Service, ServiceException, ShapePoint};
+
 // Only meaningful to separate routes according to docs
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
@@ -58,9 +60,9 @@ impl From<u32> for BikeSupport {
 
 #[derive(Debug, Deserialize)]
 pub struct Trip<'sc> {
+    trip_id: String,
     route_id: String,
     service_id: String,
-    trip_id: String,
     trip_headsign: Option<String>,
     trip_short_name: Option<String>,
     direction_id: Option<DirectionType>,
@@ -71,10 +73,13 @@ pub struct Trip<'sc> {
 
     #[serde(skip)]
     // I may not be able to use the lifetime in both places
-    trip: Option<&'sc Trip<'sc>>,
-    //calender_service: Option<&'sc Calendar<'sc>>,
-    //calendar_date_service: Option<&'sc CalendarDate<'sc>>, // Only used when calendar.txt is omitted, not the case for MTA
-    //shape: Option<&'sc Shape>,
+    route: Option<&'sc Route<'sc>>,
+    #[serde(skip)]
+    calender_service: Option<&'sc Service>,
+    #[serde(skip)]
+    calendar_date_service: Option<&'sc ServiceException<'sc>>, // Only used when calendar.txt is omitted, not the case for MTA
+    #[serde(skip)]
+    shape: Option<&'sc ShapePoint>,
 }
 
 #[cfg(test)]

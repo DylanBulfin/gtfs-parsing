@@ -18,7 +18,7 @@ impl From<u32> for Activity {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Calendar {
+pub struct Service {
     service_id: String,
     sunday: Activity,
     monday: Activity,
@@ -49,10 +49,13 @@ impl From<u32> for ExceptionType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct CalendarDate {
+pub struct ServiceException<'sc> {
     service_id: String,
     date: String,
     exception_type: ExceptionType,
+
+    #[serde(skip)]
+    service: Option<&'sc Service>,
 }
 
 #[cfg(test)]
@@ -65,7 +68,7 @@ mod tests {
     fn test_calendar() -> Result<(), csv::Error> {
         let path = PathBuf::from("./test_data/calendar.txt");
         let mut reader = csv::Reader::from_path(path)?;
-        let mut res: Vec<Calendar> = Vec::new();
+        let mut res: Vec<Service> = Vec::new();
 
         for rec in reader.deserialize() {
             res.push(rec?);
@@ -93,7 +96,7 @@ mod tests {
     fn test_calendar_dates() -> Result<(), csv::Error> {
         let path = PathBuf::from("./test_data/calendar_dates.txt");
         let mut reader = csv::Reader::from_path(path)?;
-        let mut res: Vec<CalendarDate> = Vec::new();
+        let mut res: Vec<ServiceException> = Vec::new();
 
         for rec in reader.deserialize() {
             res.push(rec?);
