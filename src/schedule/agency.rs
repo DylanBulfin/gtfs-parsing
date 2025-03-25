@@ -2,14 +2,14 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Agency {
-    agency_id: Option<String>,
-    agency_name: String,
-    agency_url: String,
-    agency_timezone: String,
-    agency_lang: Option<String>,
-    agency_phone: Option<String>,
-    agency_fare_url: Option<String>,
-    agency_email: Option<String>,
+    pub agency_id: Option<String>,
+    pub agency_name: String,
+    pub agency_url: String,
+    pub agency_timezone: String,
+    pub agency_lang: Option<String>,
+    pub agency_phone: Option<String>,
+    pub agency_fare_url: Option<String>,
+    pub agency_email: Option<String>,
 }
 
 #[cfg(test)]

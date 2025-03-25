@@ -44,23 +44,21 @@ impl From<u32> for WheelchairBoarding {
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Stop {
-    stop_id: String,
-    stop_code: Option<String>,
-    stop_name: Option<String>,
-    tts_stop_name: Option<String>,
-    stop_desc: Option<String>,
-    stop_lat: Option<String>,
-    stop_lon: Option<String>,
-    zone_id: Option<String>,
-    stop_url: Option<String>,
-    location_type: Option<LocationType>,
-    parent_station: Option<String>,
-    stop_timezone: Option<String>,
-    wheelchair_boarding: Option<WheelchairBoarding>,
-    level_id: Option<String>,
-    platform_code: Option<String>,
-    //#[serde(skip)]
-    //level: Option<&'sc level>,
+    pub stop_id: String,
+    pub stop_code: Option<String>,
+    pub stop_name: Option<String>,
+    pub tts_stop_name: Option<String>,
+    pub stop_desc: Option<String>,
+    pub stop_lat: Option<String>,
+    pub stop_lon: Option<String>,
+    pub zone_id: Option<String>,
+    pub stop_url: Option<String>,
+    pub location_type: Option<LocationType>,
+    pub parent_station: Option<String>,
+    pub stop_timezone: Option<String>,
+    pub wheelchair_boarding: Option<WheelchairBoarding>,
+    pub level_id: Option<String>,
+    pub platform_code: Option<String>,
 }
 
 #[cfg(test)]

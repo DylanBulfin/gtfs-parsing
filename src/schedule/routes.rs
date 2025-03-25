@@ -57,7 +57,7 @@ impl From<u32> for ContinuousType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Route<'sc> {
+pub struct Route {
     route_id: String,
     agency_id: Option<String>,
     route_short_name: Option<String>,
@@ -71,10 +71,6 @@ pub struct Route<'sc> {
     continuous_pickup: Option<ContinuousType>,
     continuous_drop_off: Option<ContinuousType>,
     network_id: Option<String>,
-
-    #[serde(skip)]
-    agency: Option<&'sc Agency>,
-    //network: Option<&'sc Network>
 }
 
 #[cfg(test)]

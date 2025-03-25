@@ -59,27 +59,17 @@ impl From<u32> for BikeSupport {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Trip<'sc> {
-    trip_id: String,
-    route_id: String,
-    service_id: String,
-    trip_headsign: Option<String>,
-    trip_short_name: Option<String>,
-    direction_id: Option<DirectionType>,
-    block_id: Option<String>,
-    shape_id: Option<String>,
-    wheelchair_accessible: Option<WheelchairAccessibility>,
-    bikes_allowed: Option<BikeSupport>,
-
-    #[serde(skip)]
-    // I may not be able to use the lifetime in both places
-    route: Option<&'sc Route<'sc>>,
-    #[serde(skip)]
-    calender_service: Option<&'sc Service>,
-    #[serde(skip)]
-    calendar_date_service: Option<&'sc ServiceException<'sc>>, // Only used when calendar.txt is omitted, not the case for MTA
-    #[serde(skip)]
-    shape: Option<&'sc ShapePoint>,
+pub struct Trip {
+    pub trip_id: String,
+    pub route_id: String,
+    pub service_id: String,
+    pub trip_headsign: Option<String>,
+    pub trip_short_name: Option<String>,
+    pub direction_id: Option<DirectionType>,
+    pub block_id: Option<String>,
+    pub shape_id: Option<String>,
+    pub wheelchair_accessible: Option<WheelchairAccessibility>,
+    pub bikes_allowed: Option<BikeSupport>,
 }
 
 #[cfg(test)]

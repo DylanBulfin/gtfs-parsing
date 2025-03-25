@@ -1,3 +1,5 @@
+use std::marker::PhantomData;
+
 use serde::Deserialize;
 
 use super::{stops::Stop, trips::Trip};
@@ -62,33 +64,25 @@ impl From<u32> for Timepoint {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct StopTime<'sc> {
-    trip_id: String,
-    arrival_time: Option<String>,
-    departure_time: Option<String>,
-    stop_id: Option<String>,
-    location_group_id: Option<String>,
-    location_id: Option<String>,
-    stop_sequence: Option<u32>,
-    stop_headsign: Option<String>,
-    start_pickup_drop_off_window: Option<String>,
-    end_pickup_drop_off_window: Option<String>,
-    pickup_type: Option<PickupType>,
-    drop_off_type: Option<DropoffType>,
-    continuous_pickup: Option<PickupType>,
-    continuous_drop_off: Option<DropoffType>,
-    shape_dist_traveled: Option<f64>,
-    timepoint: Option<Timepoint>,
-    pickup_booking_rule_id: Option<String>,
-    drop_off_booking_rule_id: Option<String>,
-
-    #[serde(skip)]
-    trip: Option<&'sc Trip<'sc>>,
-    #[serde(skip)]
-    stop: Option<&'sc Stop>,
-    //location: Option<&'sc GeoJsonLocation>
-    //pickup_booking_rule: Option<&'sc BookingRule>
-    //dropoff_booking_rule: Option<&'sc BookingRule>
+pub struct StopTime {
+    pub trip_id: String,
+    pub arrival_time: Option<String>,
+    pub departure_time: Option<String>,
+    pub stop_id: Option<String>,
+    pub location_group_id: Option<String>,
+    pub location_id: Option<String>,
+    pub stop_sequence: Option<u32>,
+    pub stop_headsign: Option<String>,
+    pub start_pickup_drop_off_window: Option<String>,
+    pub end_pickup_drop_off_window: Option<String>,
+    pub pickup_type: Option<PickupType>,
+    pub drop_off_type: Option<DropoffType>,
+    pub continuous_pickup: Option<PickupType>,
+    pub continuous_drop_off: Option<DropoffType>,
+    pub shape_dist_traveled: Option<f64>,
+    pub timepoint: Option<Timepoint>,
+    pub pickup_booking_rule_id: Option<String>,
+    pub drop_off_booking_rule_id: Option<String>,
 }
 
 #[cfg(test)]

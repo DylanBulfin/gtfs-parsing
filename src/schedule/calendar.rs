@@ -49,13 +49,10 @@ impl From<u32> for ExceptionType {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ServiceException<'sc> {
+pub struct ServiceException {
     service_id: String,
     date: String,
     exception_type: ExceptionType,
-
-    #[serde(skip)]
-    service: Option<&'sc Service>,
 }
 
 #[cfg(test)]
