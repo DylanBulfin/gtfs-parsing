@@ -35,19 +35,19 @@ macro_rules! parse_file {
     }};
 }
 
-pub struct Schedule<'sc> {
+pub struct Schedule {
     agencies: Vec<Agency>,
     stops: Vec<Stop>,
-    stop_times: Vec<StopTime<'sc>>,
+    stop_times: Vec<StopTime>,
     services: Vec<Service>,
-    service_exceptions: Vec<ServiceException<'sc>>,
+    service_exceptions: Vec<ServiceException>,
     shape_points: Vec<ShapePoint>,
     transfers: Vec<Transfer>,
-    routes: Vec<Route<'sc>>,
-    trips: Vec<Trip<'sc>>,
+    routes: Vec<Route>,
+    trips: Vec<Trip>,
 }
 
-impl<'sc> Schedule<'sc> {
+impl Schedule {
     pub fn from_dir<P>(dir: P) -> Self
     where
         P: AsRef<Path>,
