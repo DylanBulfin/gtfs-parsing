@@ -1,22 +1,33 @@
-mod agency;
-mod calendar;
-mod routes;
-mod shapes;
-mod stop_times;
-mod stops;
-mod transfers;
-mod trips;
+pub mod agency;
+pub mod calendar;
+pub mod routes;
+pub mod shapes;
+pub mod stop_times;
+pub mod stops;
+pub mod transfers;
+pub mod trips;
+
+pub mod mta;
 
 use std::{fs, path::Path};
 
-pub use agency::Agency;
-pub use calendar::{Activity, ExceptionType, Service, ServiceException};
-pub use routes::{ContinuousType, Route, RouteType};
-pub use shapes::ShapePoint;
-pub use stop_times::StopTime;
-pub use stops::Stop;
-pub use transfers::Transfer;
-pub use trips::Trip;
+use agency::Agency;
+use calendar::{Service, ServiceException};
+use routes::Route;
+use shapes::ShapePoint;
+use stop_times::StopTime;
+use stops::Stop;
+use transfers::Transfer;
+use trips::Trip;
+
+//pub use agency::Agency;
+//pub use calendar::{Activity, ExceptionType, Service, ServiceException};
+//pub use routes::{ContinuousType, Route, RouteType};
+//pub use shapes::{Shape, ShapePoint, ShapePointData};
+//pub use stop_times::{DropoffType, PickupType, StopTime, Timepoint};
+//pub use stops::{LocationType, Stop, WheelchairBoarding};
+//pub use transfers::{Transfer, TransferType};
+//pub use trips::{BikeSupport, DirectionType, Trip, WheelchairAccessibility};
 
 macro_rules! parse_file {
     ($tf:literal, $t:ty, $dir: ident) => {{
