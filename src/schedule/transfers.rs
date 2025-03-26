@@ -27,14 +27,14 @@ impl From<u32> for TransferType {
 
 #[derive(Debug, Deserialize)]
 pub struct Transfer {
-    from_stop_id: Option<String>,
-    to_stop_id: Option<String>,
-    from_route_id: Option<String>,
-    to_route_id: Option<String>,
-    from_trip_id: Option<String>,
-    to_trip_id: Option<String>,
-    transfer_type: TransferType,
-    min_transfer_time: Option<u32>,
+    pub from_stop_id: Option<String>,
+    pub to_stop_id: Option<String>,
+    pub from_route_id: Option<String>,
+    pub to_route_id: Option<String>,
+    pub from_trip_id: Option<String>,
+    pub to_trip_id: Option<String>,
+    pub transfer_type: TransferType,
+    pub min_transfer_time: Option<u32>,
 }
 
 #[cfg(test)]

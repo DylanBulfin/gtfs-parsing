@@ -158,6 +158,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "gtfs-parsing"
+version = "0.1.0"
+dependencies = [
+ "csv",
+ "godot",
+ "serde",
+]
+
+[[package]]
 name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -290,15 +299,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "transit"
-version = "0.1.0"
-dependencies = [
- "csv",
- "godot",
- "serde",
 ]
 
 [[package]]

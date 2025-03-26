@@ -10,8 +10,8 @@ mod trips;
 use std::{fs, path::Path};
 
 pub use agency::Agency;
-pub use calendar::{Service, ServiceException};
-pub use routes::Route;
+pub use calendar::{Activity, ExceptionType, Service, ServiceException};
+pub use routes::{ContinuousType, Route, RouteType};
 pub use shapes::ShapePoint;
 pub use stop_times::StopTime;
 pub use stops::Stop;
@@ -36,15 +36,15 @@ macro_rules! parse_file {
 }
 
 pub struct Schedule {
-    agencies: Vec<Agency>,
-    stops: Vec<Stop>,
-    stop_times: Vec<StopTime>,
-    services: Vec<Service>,
-    service_exceptions: Vec<ServiceException>,
-    shape_points: Vec<ShapePoint>,
-    transfers: Vec<Transfer>,
-    routes: Vec<Route>,
-    trips: Vec<Trip>,
+    pub agencies: Vec<Agency>,
+    pub stops: Vec<Stop>,
+    pub stop_times: Vec<StopTime>,
+    pub services: Vec<Service>,
+    pub service_exceptions: Vec<ServiceException>,
+    pub shape_points: Vec<ShapePoint>,
+    pub transfers: Vec<Transfer>,
+    pub routes: Vec<Route>,
+    pub trips: Vec<Trip>,
 }
 
 impl Schedule {

@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
-enum LocationType {
+pub enum LocationType {
     StopPlatform,
     Station,
     EntranceExit,
@@ -25,7 +25,7 @@ impl From<u32> for LocationType {
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
-enum WheelchairBoarding {
+pub enum WheelchairBoarding {
     NoInfo,
     SomeSupport,
     NoSupport,

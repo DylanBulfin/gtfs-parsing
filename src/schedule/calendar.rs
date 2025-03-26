@@ -19,16 +19,16 @@ impl From<u32> for Activity {
 
 #[derive(Debug, Deserialize)]
 pub struct Service {
-    service_id: String,
-    sunday: Activity,
-    monday: Activity,
-    tuesday: Activity,
-    wednesday: Activity,
-    thursday: Activity,
-    friday: Activity,
-    saturday: Activity,
-    start_date: String,
-    end_date: String,
+    pub service_id: String,
+    pub sunday: Activity,
+    pub monday: Activity,
+    pub tuesday: Activity,
+    pub wednesday: Activity,
+    pub thursday: Activity,
+    pub friday: Activity,
+    pub saturday: Activity,
+    pub start_date: String,
+    pub end_date: String,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
@@ -50,9 +50,9 @@ impl From<u32> for ExceptionType {
 
 #[derive(Debug, Deserialize)]
 pub struct ServiceException {
-    service_id: String,
-    date: String,
-    exception_type: ExceptionType,
+    pub service_id: String,
+    pub date: String,
+    pub exception_type: ExceptionType,
 }
 
 #[cfg(test)]

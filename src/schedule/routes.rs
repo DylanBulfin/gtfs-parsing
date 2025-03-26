@@ -58,19 +58,19 @@ impl From<u32> for ContinuousType {
 
 #[derive(Debug, Deserialize)]
 pub struct Route {
-    route_id: String,
-    agency_id: Option<String>,
-    route_short_name: Option<String>,
-    route_long_name: Option<String>,
-    route_desc: Option<String>,
-    route_type: RouteType,
-    route_url: Option<String>,
-    route_color: Option<String>,
-    route_text_color: Option<String>,
-    route_sort_order: Option<u32>,
-    continuous_pickup: Option<ContinuousType>,
-    continuous_drop_off: Option<ContinuousType>,
-    network_id: Option<String>,
+    pub route_id: String,
+    pub agency_id: Option<String>,
+    pub route_short_name: Option<String>,
+    pub route_long_name: Option<String>,
+    pub route_desc: Option<String>,
+    pub route_type: RouteType,
+    pub route_url: Option<String>,
+    pub route_color: Option<String>,
+    pub route_text_color: Option<String>,
+    pub route_sort_order: Option<u32>,
+    pub continuous_pickup: Option<ContinuousType>,
+    pub continuous_drop_off: Option<ContinuousType>,
+    pub network_id: Option<String>,
 }
 
 #[cfg(test)]

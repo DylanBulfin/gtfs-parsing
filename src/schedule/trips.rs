@@ -22,7 +22,7 @@ impl From<u32> for DirectionType {
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
-enum WheelchairAccessibility {
+pub enum WheelchairAccessibility {
     NoInfo,
     SomeSupport,
     NoSupport,
@@ -41,7 +41,7 @@ impl From<u32> for WheelchairAccessibility {
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
-enum BikeSupport {
+pub enum BikeSupport {
     NoInfo,
     SomeSupport,
     NoSupport,
