@@ -392,8 +392,8 @@ mod tests {
         assert_eq!(mta_schedule.trips.len(), 79970);
         assert_eq!(mta_schedule.stations.len(), 499);
 
-        // Indexed by trip_id, so has same size
-        assert_eq!(mta_schedule.stop_times.len(), 553);
+        // Indexed by trip_id, but from abbreviated file so count is meaningless
+        assert_eq!(mta_schedule.stop_times.len(), 264);
 
         assert_eq!(mta_schedule.services.len(), 71);
 

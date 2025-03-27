@@ -105,13 +105,13 @@ mod tests {
 
         let mta = res.pop().unwrap();
 
-        assert_eq!(mta.trip_id, "SIR-FA2017-SI017-Weekday-08_147100_SI..N03R");
-        assert_eq!(mta.arrival_time, Some("25:13:00".to_owned()));
-        assert_eq!(mta.departure_time, Some("25:13:00".to_owned()));
-        assert_eq!(mta.stop_id, Some("S31N".to_owned()));
+        assert_eq!(mta.trip_id, "AFA24GEN-1038-Sunday-00_123700_1..N03R");
+        assert_eq!(mta.arrival_time, Some("20:44:00".to_owned()));
+        assert_eq!(mta.departure_time, Some("20:44:00".to_owned()));
+        assert_eq!(mta.stop_id, Some("135N".to_owned()));
         assert_eq!(mta.location_group_id, None);
         assert_eq!(mta.location_id, None);
-        assert_eq!(mta.stop_sequence, Some(21));
+        assert_eq!(mta.stop_sequence, Some(6));
         assert_eq!(mta.stop_headsign, None);
         assert_eq!(mta.start_pickup_drop_off_window, None);
         assert_eq!(mta.end_pickup_drop_off_window, None);
