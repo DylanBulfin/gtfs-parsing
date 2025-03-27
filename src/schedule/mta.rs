@@ -3,12 +3,14 @@
 // file it's ignored, and the organization of entities is a bit more basic.
 // It's very brittle and could be interrupted by minor changes to their csv so, yk.
 
+use std::collections::HashMap;
+
 use super::{
     Schedule,
     agency::Agency,
     calendar::{Activity, ExceptionType, Service, ServiceException},
     routes::{Route, RouteType},
-    shapes::Shape,
+    shapes::{Shape, ShapePointData},
     stop_times::StopTime,
     stops::{LocationType, Stop},
     transfers::{Transfer, TransferType},
@@ -40,7 +42,7 @@ impl TryFrom<Agency> for MTAgency {
 }
 
 pub struct SubwayRoute {
-    pub route_id: String,
+    //pub route_id: String,
     pub agency_id: String,
     pub route_short_name: String,
     pub route_long_name: String,
@@ -54,7 +56,7 @@ pub struct SubwayRoute {
 impl SubwayRoute {
     fn try_create(value: Route) -> Result<Self, String> {
         Ok(Self {
-            route_id: value.route_id,
+            //route_id: value.route_id,
             agency_id: value.agency_id.ok_or("agency_id cannot be empty")?,
             route_short_name: value
                 .route_short_name
@@ -72,7 +74,7 @@ impl SubwayRoute {
 }
 
 pub struct SubwayTrip {
-    pub trip_id: String,
+    //pub trip_id: String,
     pub route_id: String,
     pub service_id: String,
     pub trip_headsign: String,
@@ -83,7 +85,7 @@ pub struct SubwayTrip {
 impl SubwayTrip {
     fn try_create(value: Trip) -> Result<Self, String> {
         Ok(Self {
-            trip_id: value.trip_id,
+            //trip_id: value.trip_id,
             trip_headsign: value.trip_headsign.ok_or("trip_headsign cannot be empty")?,
             direction_id: value.direction_id.ok_or("direction_type cannot be empty")?,
             route_id: value.route_id,
@@ -112,7 +114,7 @@ impl SubwayTransferRule {
 }
 
 pub struct SubwayStation {
-    pub station_id: String,
+    //pub station_id: String,
     pub stop_name: String,
     pub stop_lat: String,
     pub stop_lon: String,
@@ -124,7 +126,6 @@ pub struct SubwayStation {
 impl SubwayStation {
     fn try_create(parent: Stop, uptown: Stop, downtown: Stop) -> Result<Self, String> {
         let Stop {
-            stop_id,
             stop_name,
             stop_lat,
             stop_lon,
@@ -132,7 +133,7 @@ impl SubwayStation {
         } = parent;
 
         Ok(Self {
-            station_id: stop_id,
+            //station_id: stop_id,
             stop_name: stop_name.ok_or("stop_name cannot be empty")?,
             stop_lat: stop_lat.ok_or("stop_lat cannot be empty")?,
             stop_lon: stop_lon.ok_or("stop_lon cannot be empty")?,
@@ -172,20 +173,71 @@ impl SubwayStopTime {
 }
 
 // The others are used as-is
-use Service as SubwayService;
-use ServiceException as SubwayServiceException;
-use Shape as SubwayShape;
+pub struct SubwayService {
+    pub sunday: Activity,
+    pub monday: Activity,
+    pub tuesday: Activity,
+    pub wednesday: Activity,
+    pub thursday: Activity,
+    pub friday: Activity,
+    pub saturday: Activity,
+    pub start_date: String,
+    pub end_date: String,
+}
+
+impl From<Service> for SubwayService {
+    fn from(value: Service) -> Self {
+        Self {
+            sunday: value.sunday,
+            monday: value.monday,
+            tuesday: value.tuesday,
+            wednesday: value.wednesday,
+            thursday: value.thursday,
+            friday: value.friday,
+            saturday: value.saturday,
+            start_date: value.start_date,
+            end_date: value.end_date,
+        }
+    }
+}
+
+pub struct SubwayServiceException {
+    pub date: String,
+    pub exception_type: ExceptionType,
+}
+
+impl From<ServiceException> for SubwayServiceException {
+    fn from(value: ServiceException) -> Self {
+        Self {
+            date: value.date,
+            exception_type: value.exception_type,
+        }
+    }
+}
+
+pub struct SubwayShape {
+    pub points: Vec<ShapePointData>,
+}
+
+impl From<Shape> for SubwayShape {
+    fn from(value: Shape) -> Self {
+        Self {
+            points: value.points,
+        }
+    }
+}
 
 pub struct SubwaySchedule {
     agency: MTAgency,
-    routes: Vec<SubwayRoute>,
-    trips: Vec<SubwayTrip>,
-    transfers: Vec<SubwayTransferRule>,
-    stations: Vec<SubwayStation>,
+    routes: HashMap<String, SubwayRoute>,
+    trips: HashMap<String, SubwayTrip>,
+    stations: HashMap<String, SubwayStation>,
+    services: HashMap<String, SubwayService>,
+    shapes: HashMap<String, SubwayShape>,
+
     stop_times: Vec<SubwayStopTime>,
-    services: Vec<SubwayService>,
+    transfers: Vec<SubwayTransferRule>,
     service_exceptions: Vec<SubwayServiceException>,
-    shapes: Vec<SubwayShape>,
 }
 
 impl TryFrom<Schedule> for SubwaySchedule {
@@ -195,39 +247,29 @@ impl TryFrom<Schedule> for SubwaySchedule {
         let Schedule {
             mut agencies,
             routes: base_routes,
-            trips: mut base_trips,
-            transfers: mut base_transfers,
+            trips: base_trips,
+            transfers: base_transfers,
             stops: mut base_stops,
-            stop_times: mut base_stop_times,
-            shapes,
-            services,
-            service_exceptions,
+            stop_times: base_stop_times,
+            shapes: base_shapes,
+            services: base_services,
+            service_exceptions: base_service_exceptions,
         } = value;
 
         assert_eq!(agencies.len(), 1);
         let agency = MTAgency::try_from(agencies.pop().unwrap())?;
 
-        let mut schedule = Self {
-            agency,
-            routes: Vec::new(),
-            trips: Vec::new(),
-            transfers: Vec::new(),
-            stations: Vec::new(),
-            stop_times: Vec::new(),
-            services: Vec::new(),
-            service_exceptions: Vec::new(),
-            shapes: Vec::new(),
-        };
-
-        //let mut routes: Vec<SubwayRoute> = Vec::new();
+        let mut routes = HashMap::new();
         for route in base_routes {
-            schedule.routes.push(SubwayRoute::try_create(route)?);
+            routes.insert(route.route_id.to_owned(), SubwayRoute::try_create(route)?);
         }
 
+        let mut trips = HashMap::new();
         for trip in base_trips {
-            schedule.trips.push(SubwayTrip::try_create(trip)?);
+            trips.insert(trip.trip_id.to_owned(), SubwayTrip::try_create(trip)?);
         }
 
+        let mut stations = HashMap::new();
         assert_eq!(base_stops.len() % 3, 0);
         while base_stops.len() >= 3 {
             // TODO This relies on a specific order for the stops, probably want to change
@@ -237,12 +279,14 @@ impl TryFrom<Schedule> for SubwaySchedule {
                 base_stops.pop().unwrap(),
             );
 
-            schedule
-                .stations
-                .push(SubwayStation::try_create(parent, uptown, downtown)?);
+            stations.insert(
+                parent.stop_id.to_owned(),
+                SubwayStation::try_create(parent, uptown, downtown)?,
+            );
         }
         assert_eq!(base_stops.len(), 0);
 
+        let mut stop_times = Vec::new();
         for stop_time in base_stop_times {
             let platform_id = stop_time.stop_id.clone().ok_or("stop_id cannot be empty")?;
             assert!(platform_id.is_ascii());
@@ -253,20 +297,44 @@ impl TryFrom<Schedule> for SubwaySchedule {
                 c => panic!("Unexpected character at end of stop: {}", c),
             };
 
-            schedule.stop_times.push(SubwayStopTime::try_create(
+            stop_times.push(SubwayStopTime::try_create(
                 stop_time,
                 platform_id[0..platform_id.len() - 1].to_owned(),
                 uptown,
             )?)
         }
 
+        let mut transfers = Vec::new();
         for transfer in base_transfers {
-            schedule
-                .transfers
-                .push(SubwayTransferRule::try_create(transfer)?);
+            transfers.push(SubwayTransferRule::try_create(transfer)?);
         }
 
-        Ok(schedule)
+        let mut shapes = HashMap::new();
+        for shape in base_shapes {
+            shapes.insert(shape.shape_id.to_owned(), shape.into());
+        }
+
+        let mut services = HashMap::new();
+        for service in base_services {
+            services.insert(service.service_id.to_owned(), service.into());
+        }
+
+        let mut service_exceptions = Vec::new();
+        for service_exception in base_service_exceptions {
+            service_exceptions.push(service_exception.into());
+        }
+
+        Ok(Self {
+            agency,
+            routes,
+            trips,
+            stations,
+            stop_times,
+            service_exceptions,
+            services,
+            shapes,
+            transfers,
+        })
     }
 }
 
@@ -296,10 +364,6 @@ mod tests {
         assert_eq!(mta_schedule.stations.len(), 499);
         assert_eq!(mta_schedule.stop_times.len(), 10000);
         assert_eq!(mta_schedule.transfers.len(), 616);
-
-        for route in mta_schedule.routes {
-            assert_eq!(route.agency_id, "MTA NYCT");
-        }
 
         Ok(())
     }
