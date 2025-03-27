@@ -14,7 +14,7 @@ use std::{fs, path::Path};
 use agency::Agency;
 use calendar::{Service, ServiceException};
 use routes::Route;
-use shapes::ShapePoint;
+use shapes::{Shape, ShapePoint};
 use stop_times::StopTime;
 use stops::Stop;
 use transfers::Transfer;
@@ -52,7 +52,8 @@ pub struct Schedule {
     pub stop_times: Vec<StopTime>,
     pub services: Vec<Service>,
     pub service_exceptions: Vec<ServiceException>,
-    pub shape_points: Vec<ShapePoint>,
+    //pub shape_points: Vec<ShapePoint>,
+    pub shapes: Vec<Shape>,
     pub transfers: Vec<Transfer>,
     pub routes: Vec<Route>,
     pub trips: Vec<Trip>,
@@ -69,7 +70,7 @@ impl Schedule {
             stop_times: Vec::new(),
             services: Vec::new(),
             service_exceptions: Vec::new(),
-            shape_points: Vec::new(),
+            shapes: Vec::new(),
             transfers: Vec::new(),
             routes: Vec::new(),
             trips: Vec::new(),
@@ -104,8 +105,12 @@ impl Schedule {
             dir
         ));
         schedule
-            .shape_points
-            .append(&mut parse_file!("shapes.txt", ShapePoint, dir));
+            .shapes
+            .append(&mut Shape::process_points(&parse_file!(
+                "shapes.txt",
+                ShapePoint,
+                dir
+            )));
         schedule
             .transfers
             .append(&mut parse_file!("transfers.txt", Transfer, dir));
@@ -135,7 +140,7 @@ mod tests {
         assert_eq!(schedule.stop_times.len(), 10000);
         assert_eq!(schedule.services.len(), 3);
         assert_eq!(schedule.service_exceptions.len(), 456);
-        assert_eq!(schedule.shape_points.len(), 176482);
+        assert_eq!(schedule.shapes.len(), 311);
         assert_eq!(schedule.transfers.len(), 616);
         assert_eq!(schedule.routes.len(), 30);
         assert_eq!(schedule.trips.len(), 20298);
