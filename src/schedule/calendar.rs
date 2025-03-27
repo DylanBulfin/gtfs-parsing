@@ -71,11 +71,11 @@ mod tests {
             res.push(rec?);
         }
 
-        assert_eq!(res.len(), 3);
+        assert_eq!(res.len(), 71);
 
         let mta = res.pop().unwrap();
 
-        assert_eq!(mta.service_id, "Weekday");
+        assert_eq!(mta.service_id, "SIR-FA2017-SI017-Weekday-08_C17");
         assert_eq!(mta.sunday, Activity::Inactive);
         assert_eq!(mta.monday, Activity::Active);
         assert_eq!(mta.tuesday, Activity::Active);
@@ -83,8 +83,8 @@ mod tests {
         assert_eq!(mta.thursday, Activity::Active);
         assert_eq!(mta.friday, Activity::Active);
         assert_eq!(mta.saturday, Activity::Inactive);
-        assert_eq!(mta.start_date, "20250323");
-        assert_eq!(mta.end_date, "20250518");
+        assert_eq!(mta.start_date, "20241216");
+        assert_eq!(mta.end_date, "20250606");
 
         Ok(())
     }
@@ -99,11 +99,11 @@ mod tests {
             res.push(rec?);
         }
 
-        assert_eq!(res.len(), 456);
+        assert_eq!(res.len(), 406);
 
         let mta = res.pop().unwrap();
 
-        assert_eq!(mta.service_id, "SIR-FA2017-SI017-Weekday-08_C20");
+        assert_eq!(mta.service_id, "SIR-FA2017-SI017-Weekday-08_C17");
         assert_eq!(mta.date, "20250526");
         assert_eq!(mta.exception_type, ExceptionType::Removed);
 

@@ -60,7 +60,21 @@ pub struct Schedule {
 }
 
 impl Schedule {
-    pub fn from_dir<P>(dir: P) -> Self
+    pub fn from_dir_full<P>(dir: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self::from_dir(dir, false)
+    }
+
+    pub fn from_dir_abbrev<P>(dir: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self::from_dir(dir, true)
+    }
+
+    pub fn from_dir<P>(dir: P, use_abbrev: bool) -> Self
     where
         P: AsRef<Path>,
     {
@@ -93,9 +107,16 @@ impl Schedule {
         schedule
             .stops
             .append(&mut parse_file!("stops.txt", Stop, dir));
-        schedule
-            .stop_times
-            .append(&mut parse_file!("stop_times_abbrev.txt", StopTime, dir));
+
+        if use_abbrev {
+            schedule
+                .stop_times
+                .append(&mut parse_file!("stop_times_abbrev.txt", StopTime, dir));
+        } else {
+            schedule
+                .stop_times
+                .append(&mut parse_file!("stop_times.txt", StopTime, dir));
+        }
         schedule
             .services
             .append(&mut parse_file!("calendar.txt", Service, dir));
@@ -133,16 +154,16 @@ mod tests {
 
     #[test]
     fn test_from_dir() {
-        let schedule = Schedule::from_dir("./test_data");
+        let schedule = Schedule::from_dir_abbrev("./test_data");
 
         assert_eq!(schedule.agencies.len(), 1);
         assert_eq!(schedule.stops.len(), 1497);
         assert_eq!(schedule.stop_times.len(), 10000);
-        assert_eq!(schedule.services.len(), 3);
-        assert_eq!(schedule.service_exceptions.len(), 456);
+        assert_eq!(schedule.services.len(), 71);
+        assert_eq!(schedule.service_exceptions.len(), 406);
         assert_eq!(schedule.shapes.len(), 311);
         assert_eq!(schedule.transfers.len(), 616);
         assert_eq!(schedule.routes.len(), 30);
-        assert_eq!(schedule.trips.len(), 20298);
+        assert_eq!(schedule.trips.len(), 79970);
     }
 }

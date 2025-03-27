@@ -88,13 +88,13 @@ mod tests {
             res.push(rec?);
         }
 
-        assert_eq!(res.len(), 20298);
+        assert_eq!(res.len(), 79970);
 
         let mta = res.pop().unwrap();
 
         assert_eq!(mta.route_id, "SI");
         assert_eq!(mta.trip_id, "SIR-FA2017-SI017-Weekday-08_147100_SI..N03R");
-        assert_eq!(mta.service_id, "Weekday");
+        assert_eq!(mta.service_id, "SIR-FA2017-SI017-Weekday-08");
         assert_eq!(mta.trip_headsign, Some("St George".to_owned()));
         assert_eq!(mta.direction_id, Some(DirectionType::Uptown));
         assert_eq!(mta.shape_id, Some("SI..N03R".to_owned()));
