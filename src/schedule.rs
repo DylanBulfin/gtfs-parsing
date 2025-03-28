@@ -46,6 +46,7 @@ macro_rules! parse_file {
     }};
 }
 
+#[derive(Debug)]
 pub struct Schedule {
     pub agencies: Vec<Agency>,
     pub stops: Vec<Stop>,
