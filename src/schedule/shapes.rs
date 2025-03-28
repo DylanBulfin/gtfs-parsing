@@ -3,9 +3,9 @@ use std::collections::{
     hash_map::{Entry, OccupiedEntry},
 };
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Clone, Copy, Serialize)]
 // Holds the base data for a point on a shape. Allows us to avoid storing the shape ID multiple times
 pub struct ShapePointData {
     pub shape_pt_lat: f64,
@@ -23,7 +23,7 @@ impl From<&ShapePoint> for ShapePointData {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShapePoint {
     pub shape_id: String,
     pub shape_pt_sequence: u32,
@@ -32,7 +32,7 @@ pub struct ShapePoint {
     pub shape_dist_traveled: Option<f64>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Shape {
     pub shape_id: String,
     pub points: Vec<ShapePointData>,
