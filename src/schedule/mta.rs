@@ -464,7 +464,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
+   #[ignore]
     fn test_full() -> Result<(), String> {
         let schedule = Schedule::from_dir_full("./test_data");
 

@@ -1,7 +1,7 @@
 // TODO disable this
 #![allow(unused)]
 
-mod schedule;
+pub mod schedule;
 
 use godot::prelude::*;
 
