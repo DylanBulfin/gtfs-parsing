@@ -1,4 +1,11 @@
+use protobuf::Message;
+use protos::gtfs_realtime::FeedMessage;
+
 pub mod protos;
+
+pub fn try_parse_bytes(bytes: &[u8]) -> Option<FeedMessage> {
+    FeedMessage::parse_from_bytes(bytes).ok()
+}
 
 #[cfg(test)]
 mod tests {
