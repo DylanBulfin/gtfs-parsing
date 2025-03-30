@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn test_transfers() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/transfers.txt");
+        let path = PathBuf::from("./test_data/schedule/transfers.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<Transfer> = Vec::new();
 

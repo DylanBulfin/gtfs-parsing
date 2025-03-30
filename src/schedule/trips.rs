@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn test_trips() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/trips.txt");
+        let path = PathBuf::from("./test_data/schedule/trips.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<Trip> = Vec::new();
 

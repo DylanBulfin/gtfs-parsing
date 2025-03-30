@@ -20,7 +20,7 @@ mod tests {
 
     #[test]
     fn test_agency() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/agency.txt");
+        let path = PathBuf::from("./test_data/schedule/agency.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<Agency> = Vec::new();
 

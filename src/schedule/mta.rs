@@ -375,7 +375,7 @@ mod tests {
 
     #[test]
     fn test_basics() -> Result<(), String> {
-        let schedule = Schedule::from_dir_abbrev("./test_data");
+        let schedule = Schedule::from_dir_abbrev("./test_data/schedule");
 
         let mta_schedule = SubwaySchedule::try_from(schedule)?;
 
@@ -464,9 +464,9 @@ mod tests {
     }
 
     #[test]
-   #[ignore]
+    #[ignore]
     fn test_full() -> Result<(), String> {
-        let schedule = Schedule::from_dir_full("./test_data");
+        let schedule = Schedule::from_dir_full("./test_data/schedule");
 
         let mta_schedule = SubwaySchedule::try_from(schedule)?;
 

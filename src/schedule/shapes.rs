@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_shapes() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/shapes.txt");
+        let path = PathBuf::from("./test_data/schedule/shapes.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<ShapePoint> = Vec::new();
 
@@ -95,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_process_points() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/shapes.txt");
+        let path = PathBuf::from("./test_data/schedule/shapes.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<ShapePoint> = Vec::new();
 

@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn test_from_dir() {
-        let schedule = Schedule::from_dir_abbrev("./test_data");
+        let schedule = Schedule::from_dir_abbrev("./test_data/schedule");
 
         assert_eq!(schedule.agencies.len(), 1);
         assert_eq!(schedule.stops.len(), 1497);

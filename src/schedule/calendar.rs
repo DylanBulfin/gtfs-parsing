@@ -63,7 +63,7 @@ mod tests {
 
     #[test]
     fn test_calendar() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/calendar.txt");
+        let path = PathBuf::from("./test_data/schedule/calendar.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<Service> = Vec::new();
 
@@ -91,7 +91,7 @@ mod tests {
 
     #[test]
     fn test_calendar_dates() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/calendar_dates.txt");
+        let path = PathBuf::from("./test_data/schedule/calendar_dates.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<ServiceException> = Vec::new();
 

@@ -69,7 +69,7 @@ mod tests {
 
     #[test]
     fn test_stops() -> Result<(), csv::Error> {
-        let path = PathBuf::from("./test_data/stops.txt");
+        let path = PathBuf::from("./test_data/schedule/stops.txt");
         let mut reader = csv::Reader::from_path(path)?;
         let mut res: Vec<Stop> = Vec::new();
 
