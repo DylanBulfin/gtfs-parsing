@@ -71,7 +71,7 @@ pub struct StopTime {
     pub stop_id: Option<String>,
     pub location_group_id: Option<String>,
     pub location_id: Option<String>,
-    pub stop_sequence: Option<u32>,
+    pub stop_sequence: u32,
     pub stop_headsign: Option<String>,
     pub start_pickup_drop_off_window: Option<String>,
     pub end_pickup_drop_off_window: Option<String>,

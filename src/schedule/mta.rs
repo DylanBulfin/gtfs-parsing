@@ -159,7 +159,7 @@ impl SubwayStopTime {
             departure_time: value
                 .departure_time
                 .ok_or("departure_time cannot be empty")?,
-            stop_sequence: value.stop_sequence.ok_or("stop_sequence cannot be empty")?,
+            stop_sequence: value.stop_sequence,
 
             uptown,
         })
