@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize)]
 pub struct Agency {
     pub agency_id: Option<String>,
     pub agency_name: String,

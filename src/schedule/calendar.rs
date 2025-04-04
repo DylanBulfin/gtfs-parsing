@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum Activity {
     Inactive,
@@ -23,7 +23,7 @@ impl From<Activity> for bool {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize)]
 pub struct Service {
     pub service_id: String,
     pub sunday: Activity,
@@ -37,7 +37,7 @@ pub struct Service {
     pub end_date: String,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum ExceptionType {
     Added,
@@ -54,7 +54,7 @@ impl From<u32> for ExceptionType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize)]
 pub struct ServiceException {
     pub service_id: String,
     pub date: String,

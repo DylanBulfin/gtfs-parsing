@@ -5,51 +5,47 @@ use std::collections::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, Clone, Copy, Serialize)]
 // Holds the base data for a point on a shape. Allows us to avoid storing the shape ID multiple times
 pub struct ShapePointData {
-    pub shape_pt_lat: String,
-    pub shape_pt_lon: String,
-    pub shape_dist_traveled: Option<String>,
+    pub shape_pt_lat: f64,
+    pub shape_pt_lon: f64,
+    pub shape_dist_traveled: Option<f64>,
 }
 
-impl From<ShapePoint> for ShapePointData {
-    fn from(value: ShapePoint) -> Self {
-        let ShapePoint {
-            shape_pt_lat,
-            shape_dist_traveled,
-            shape_pt_lon,
-            ..
-        } = value;
+impl From<&ShapePoint> for ShapePointData {
+    fn from(value: &ShapePoint) -> Self {
         Self {
-            shape_dist_traveled,
-            shape_pt_lon,
-            shape_pt_lat,
+            shape_dist_traveled: value.shape_dist_traveled,
+            shape_pt_lon: value.shape_pt_lon,
+            shape_pt_lat: value.shape_pt_lat,
         }
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShapePoint {
     pub shape_id: String,
     pub shape_pt_sequence: u32,
-    pub shape_pt_lat: String,
-    pub shape_pt_lon: String,
-    pub shape_dist_traveled: Option<String>,
+    pub shape_pt_lat: f64,
+    pub shape_pt_lon: f64,
+    pub shape_dist_traveled: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Shape {
     pub shape_id: String,
     pub points: Vec<ShapePointData>,
 }
 
 impl Shape {
-    pub fn process_points(points: Vec<ShapePoint>) -> Vec<Self> {
+    pub fn process_points(points: &Vec<ShapePoint>) -> Vec<Self> {
         let mut map = HashMap::new();
 
         for point in points {
-            match map.entry(point.shape_id.clone()) {
+            let id = &point.shape_id;
+
+            match map.entry(id) {
                 Entry::Occupied(mut e) => {
                     let shape: &mut Shape = (e.get_mut());
 
@@ -57,7 +53,7 @@ impl Shape {
                 }
                 Entry::Vacant(mut e) => {
                     e.insert(Shape {
-                        shape_id: point.shape_id.to_string(),
+                        shape_id: id.to_string(),
                         points: Vec::new(),
                     });
                 }
@@ -89,8 +85,8 @@ mod tests {
         let mta = res.pop().unwrap();
 
         assert_eq!(mta.shape_id, "SI.S31R");
-        assert_eq!(mta.shape_pt_lat, "40.512764");
-        assert_eq!(mta.shape_pt_lon, "-74.251961");
+        assert_eq!(mta.shape_pt_lat, 40.512764);
+        assert_eq!(mta.shape_pt_lon, -74.251961);
         assert_eq!(mta.shape_pt_sequence, 689);
         assert_eq!(mta.shape_dist_traveled, None);
 
@@ -109,7 +105,7 @@ mod tests {
 
         assert_eq!(res.len(), 176482);
 
-        let mut shapes = Shape::process_points(res);
+        let mut shapes = Shape::process_points(&res);
         shapes.sort_by_key(|s| s.shape_id.to_owned());
 
         assert_eq!(shapes.len(), 311);
@@ -121,8 +117,8 @@ mod tests {
 
         let point = mta.points.pop().unwrap();
 
-        assert_eq!(point.shape_pt_lat, "40.512764");
-        assert_eq!(point.shape_pt_lon, "-74.251961");
+        assert_eq!(point.shape_pt_lat, 40.512764);
+        assert_eq!(point.shape_pt_lon, -74.251961);
         assert_eq!(point.shape_dist_traveled, None);
 
         Ok(())

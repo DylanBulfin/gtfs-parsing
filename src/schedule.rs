@@ -9,7 +9,7 @@ pub mod trips;
 
 pub mod mta;
 
-use std::{collections::HashSet, fs, io::Read, path::Path};
+use std::{fs, path::Path};
 
 use agency::Agency;
 use calendar::{Service, ServiceException};
@@ -46,76 +46,21 @@ macro_rules! parse_file {
     }};
 }
 
-macro_rules! parse_reader {
-    ($t:ty, $read:ident) => {{
-        let mut res = std::collections::HashSet::new();
-
-        let mut reader = csv::Reader::from_reader($read);
-
-        for rec in reader.deserialize() {
-            res.insert(rec.map_err(|e| e.to_string())?);
-        }
-
-        res
-    }};
-}
-
 #[derive(Debug)]
-pub struct OldSchedule {
+pub struct Schedule {
     pub agencies: Vec<Agency>,
     pub stops: Vec<Stop>,
     pub stop_times: Vec<StopTime>,
     pub services: Vec<Service>,
     pub service_exceptions: Vec<ServiceException>,
+    //pub shape_points: Vec<ShapePoint>,
     pub shapes: Vec<Shape>,
     pub transfers: Vec<Transfer>,
     pub routes: Vec<Route>,
     pub trips: Vec<Trip>,
 }
 
-#[derive(Debug)]
-pub struct Schedule {
-    pub agencies: HashSet<Agency>,
-    pub stops: HashSet<Stop>,
-    pub stop_times: HashSet<StopTime>,
-    pub services: HashSet<Service>,
-    pub service_exceptions: HashSet<ServiceException>,
-    pub shapes: HashSet<Shape>,
-    pub transfers: HashSet<Transfer>,
-    pub routes: HashSet<Route>,
-    pub trips: HashSet<Trip>,
-}
-
 impl Schedule {
-    pub fn try_from_reader<R>(
-        agency_r: R,
-        stop_r: R,
-        stop_time_r: R,
-        service_r: R,
-        service_exception_r: R,
-        shape_r: R,
-        transfer_r: R,
-        route_r: R,
-        trip_r: R,
-    ) -> Result<Self, String>
-    where
-        R: Read,
-    {
-        Ok(Schedule {
-            agencies: parse_reader!(Agency, agency_r),
-            stops: parse_reader!(Stop, stop_r),
-            stop_times: parse_reader!(StopTime, stop_time_r),
-            services: parse_reader!(Service, service_r),
-            service_exceptions: parse_reader!(ServiceException, service_exception_r),
-            shapes: parse_reader!(Shape, shape_r),
-            transfers: parse_reader!(Transfer, transfer_r),
-            routes: parse_reader!(Route, route_r),
-            trips: parse_reader!(Trip, trip_r),
-        })
-    }
-}
-
-impl OldSchedule {
     pub fn from_dir_full<P>(dir: P) -> Self
     where
         P: AsRef<Path>,
@@ -134,7 +79,7 @@ impl OldSchedule {
     where
         P: AsRef<Path>,
     {
-        let mut schedule = OldSchedule {
+        let mut schedule = Schedule {
             agencies: Vec::new(),
             stops: Vec::new(),
             stop_times: Vec::new(),
@@ -146,17 +91,17 @@ impl OldSchedule {
             trips: Vec::new(),
         };
 
-        // let mut agency_path = dir.as_ref().to_path_buf();
-        // agency_path.push("agency.txt");
-        // if Path::try_exists(&agency_path).expect("Unable to check existence of file") {
-        //     let mut reader = csv::Reader::from_path(agency_path).expect("Unable to read file");
-        //     let mut res: Vec<Agency> = Vec::new();
-        //
-        //     for rec in reader.deserialize() {
-        //         res.push(rec.expect("Unable to parse file"));
-        //     }
-        // }
-        //
+        let mut agency_path = dir.as_ref().to_path_buf();
+        agency_path.push("agency.txt");
+        if Path::try_exists(&agency_path).expect("Unable to check existence of file") {
+            let mut reader = csv::Reader::from_path(agency_path).expect("Unable to read file");
+            let mut res: Vec<Agency> = Vec::new();
+
+            for rec in reader.deserialize() {
+                res.push(rec.expect("Unable to parse file"));
+            }
+        }
+
         schedule
             .agencies
             .append(&mut parse_file!("agency.txt", Agency, dir));
@@ -183,7 +128,7 @@ impl OldSchedule {
         ));
         schedule
             .shapes
-            .append(&mut Shape::process_points(parse_file!(
+            .append(&mut Shape::process_points(&parse_file!(
                 "shapes.txt",
                 ShapePoint,
                 dir
@@ -210,7 +155,7 @@ mod tests {
 
     #[test]
     fn test_from_dir() {
-        let schedule = OldSchedule::from_dir_abbrev("./test_data/schedule");
+        let schedule = Schedule::from_dir_abbrev("./test_data/schedule");
 
         assert_eq!(schedule.agencies.len(), 1);
         assert_eq!(schedule.stops.len(), 1497);

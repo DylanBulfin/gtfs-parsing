@@ -42,7 +42,7 @@ impl From<u32> for WheelchairBoarding {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Stop {
     pub stop_id: String,
     pub stop_code: Option<String>,

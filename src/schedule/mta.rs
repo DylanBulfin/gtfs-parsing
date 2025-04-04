@@ -6,7 +6,7 @@
 use std::collections::{HashMap, hash_map::Entry};
 
 use super::{
-    OldSchedule,
+    Schedule,
     agency::Agency,
     calendar::{Activity, ExceptionType, Service, ServiceException},
     routes::{Route, RouteType},
@@ -233,11 +233,11 @@ pub struct SubwaySchedule {
     service_exceptions: HashMap<String, Vec<SubwayServiceException>>, // key = service_id
 }
 
-impl TryFrom<OldSchedule> for SubwaySchedule {
+impl TryFrom<Schedule> for SubwaySchedule {
     type Error = String;
 
-    fn try_from(value: OldSchedule) -> Result<Self, Self::Error> {
-        let OldSchedule {
+    fn try_from(value: Schedule) -> Result<Self, Self::Error> {
+        let Schedule {
             mut agencies,
             routes: base_routes,
             trips: base_trips,
@@ -369,13 +369,13 @@ impl TryFrom<OldSchedule> for SubwaySchedule {
 
 #[cfg(test)]
 mod tests {
-    use crate::schedule::OldSchedule;
+    use crate::schedule::Schedule;
 
     use super::SubwaySchedule;
 
     #[test]
     fn test_basics() -> Result<(), String> {
-        let schedule = OldSchedule::from_dir_abbrev("./test_data/schedule");
+        let schedule = Schedule::from_dir_abbrev("./test_data/schedule");
 
         let mta_schedule = SubwaySchedule::try_from(schedule)?;
 
@@ -466,7 +466,7 @@ mod tests {
     #[test]
     #[ignore]
     fn test_full() -> Result<(), String> {
-        let schedule = OldSchedule::from_dir_full("./test_data/schedule");
+        let schedule = Schedule::from_dir_full("./test_data/schedule");
 
         let mta_schedule = SubwaySchedule::try_from(schedule)?;
 

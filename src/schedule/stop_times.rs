@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use super::{stops::Stop, trips::Trip};
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum DropoffType {
     Dropoff,
@@ -25,7 +25,7 @@ impl From<u32> for DropoffType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum PickupType {
     Pickup,
@@ -46,7 +46,7 @@ impl From<u32> for PickupType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum Timepoint {
     Approximate,
@@ -63,7 +63,7 @@ impl From<u32> for Timepoint {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize)]
 pub struct StopTime {
     pub trip_id: String,
     pub arrival_time: Option<String>,
@@ -79,7 +79,7 @@ pub struct StopTime {
     pub drop_off_type: Option<DropoffType>,
     pub continuous_pickup: Option<PickupType>,
     pub continuous_drop_off: Option<DropoffType>,
-    pub shape_dist_traveled: Option<String>,
+    pub shape_dist_traveled: Option<f64>,
     pub timepoint: Option<Timepoint>,
     pub pickup_booking_rule_id: Option<String>,
     pub drop_off_booking_rule_id: Option<String>,
@@ -111,7 +111,7 @@ mod tests {
         assert_eq!(mta.stop_id, Some("135N".to_owned()));
         assert_eq!(mta.location_group_id, None);
         assert_eq!(mta.location_id, None);
-        assert_eq!(mta.stop_sequence, 6);
+        assert_eq!(mta.stop_sequence, Some(6));
         assert_eq!(mta.stop_headsign, None);
         assert_eq!(mta.start_pickup_drop_off_window, None);
         assert_eq!(mta.end_pickup_drop_off_window, None);

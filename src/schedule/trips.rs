@@ -3,7 +3,7 @@ use serde::Deserialize;
 use super::{Route, Service, ServiceException, ShapePoint};
 
 // Only meaningful to separate routes according to docs
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum DirectionType {
     Uptown,
@@ -20,7 +20,7 @@ impl From<u32> for DirectionType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum WheelchairAccessibility {
     NoInfo,
@@ -39,7 +39,7 @@ impl From<u32> for WheelchairAccessibility {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize, PartialEq, Eq)]
 #[serde(from = "u32")]
 pub enum BikeSupport {
     NoInfo,
@@ -58,7 +58,7 @@ impl From<u32> for BikeSupport {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Deserialize)]
 pub struct Trip {
     pub trip_id: String,
     pub route_id: String,
