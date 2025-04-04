@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
 #[serde(from = "u32")]
 pub enum TransferType {
     Recommended,
@@ -25,7 +25,7 @@ impl From<u32> for TransferType {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Hash)]
 pub struct Transfer {
     pub from_stop_id: Option<String>,
     pub to_stop_id: Option<String>,
