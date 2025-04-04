@@ -17,6 +17,12 @@ impl From<u32> for Activity {
     }
 }
 
+impl From<Activity> for bool {
+    fn from(value: Activity) -> Self {
+        value == Activity::Active
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct Service {
     pub service_id: String,
