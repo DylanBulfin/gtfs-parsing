@@ -1,6 +1,6 @@
 use std::{fs::File, io::Read};
 
-use gtfs_parsing::realtime::protos::gtfs_realtime::{FeedMessage, VehiclePosition};
+use gtfs_parsing::realtime::protos::gtfs_realtime::FeedMessage;
 use protobuf::{Message, MessageField};
 
 fn main() {

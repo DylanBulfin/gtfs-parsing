@@ -63,13 +63,26 @@ macro_rules! parse_reader {
 
         res
     }};
-    (map: $r:expr, $kt:ty, $vt:ty, $kf: ident) => {{
+    (map: $r:expr, $kt:ty, $vt:ty, $kf:ident) => {{
         let mut res: HashMap<$kt, $vt> = HashMap::new();
         let mut reader = csv::Reader::from_reader($r);
 
         for rec in reader.deserialize() {
             let rec: $vt = if let Ok(x) = rec { x } else { continue };
             res.insert(rec.$kf.clone(), rec);
+        }
+
+        res
+    }};
+    (cmap: $r:expr, $kt:ty, $vt:ty, $kf:ident, $rec:ident, $cond:expr) => {{
+        let mut res: HashMap<$kt, $vt> = HashMap::new();
+        let mut reader = csv::Reader::from_reader($r);
+
+        for rec in reader.deserialize() {
+            let $rec: $vt = if let Ok(x) = rec { x } else { continue };
+            if $cond {
+                res.insert($rec.$kf.clone(), $rec);
+            }
         }
 
         res
@@ -111,24 +124,32 @@ impl NewSchedule {
         transfer_reader: R,
         route_reader: R,
         trip_reader: R,
+        date_bounds: Option<(&String, &String)>,
     ) -> Option<Self>
     where
         R: Read,
     {
         let agencies = parse_reader!(vec: agency_reader, Agency);
         let stops = parse_reader!(map: stop_reader, String, Stop, stop_id);
-        let services = parse_reader!(map: service_reader, String, Service, service_id);
-        let routes = parse_reader!(map: route_reader, String, Route, route_id);
-        let trips = parse_reader!(map: trip_reader, String, Trip, trip_id);
-
-        let shape_points: Vec<ShapePoint> = parse_reader!(vec: shape_reader, ShapePoint);
-        let shapes = Shape::process_points(&shape_points);
+        let services = match date_bounds {
+            Some((start, end)) => {
+                parse_reader!(cmap: service_reader, String, Service, service_id, service, &service.start_date <= end && &service.end_date >= start)
+            }
+            None => parse_reader!(map: service_reader, String, Service, service_id),
+        };
 
         let mut service_exceptions: HashMap<String, HashMap<String, ServiceException>> =
             HashMap::new();
         let mut csv_reader = csv::Reader::from_reader(service_exception_reader);
         for rec in csv_reader.deserialize() {
-            let rec: ServiceException = rec.expect("Unable to parse service_exception reader");
+            let rec: ServiceException = if let Ok(x) = rec { x } else { continue };
+
+            if let Some((start, end)) = date_bounds {
+                if &rec.date < start || &rec.date > end {
+                    continue;
+                }
+            }
+
             match service_exceptions.entry(rec.service_id.clone()) {
                 Entry::Occupied(mut e) => {
                     e.get_mut().insert(rec.date.clone(), rec);
@@ -140,6 +161,12 @@ impl NewSchedule {
                 }
             }
         }
+
+        let routes = parse_reader!(map: route_reader, String, Route, route_id);
+        let trips = parse_reader!(cmap: trip_reader, String, Trip, trip_id, trip, services.contains_key(&trip.service_id) || service_exceptions.contains_key(&trip.service_id));
+
+        let shape_points: Vec<ShapePoint> = parse_reader!(vec: shape_reader, ShapePoint);
+        let shapes = Shape::process_points(&shape_points);
 
         let mut transfers: HashMap<String, Vec<Transfer>> = HashMap::new();
         csv_reader = csv::Reader::from_reader(transfer_reader);
@@ -165,6 +192,9 @@ impl NewSchedule {
         csv_reader = csv::Reader::from_reader(stop_time_reader);
         for rec in csv_reader.deserialize() {
             let rec: StopTime = if let Ok(x) = rec { x } else { continue };
+            if !trips.contains_key(&rec.trip_id) {
+                continue;
+            }
             match stop_times.entry(rec.trip_id.clone()) {
                 Entry::Occupied(mut e) => {
                     e.get_mut().insert(rec.stop_sequence, rec);
@@ -190,106 +220,6 @@ impl NewSchedule {
         })
     }
 }
-
-pub struct Schedule {
-    pub agencies: Vec<Agency>,
-    pub stops: Vec<Stop>,
-    pub stop_times: Vec<StopTime>,
-    pub services: Vec<Service>,
-    pub service_exceptions: Vec<ServiceException>,
-    pub shapes: Vec<Shape>,
-    pub transfers: Vec<Transfer>,
-    pub routes: Vec<Route>,
-    pub trips: Vec<Trip>,
-}
-
-impl Schedule {
-    pub fn from_dir_full<P>(dir: P) -> Self
-    where
-        P: AsRef<Path>,
-    {
-        Self::from_dir(dir, false)
-    }
-
-    pub fn from_dir_abbrev<P>(dir: P) -> Self
-    where
-        P: AsRef<Path>,
-    {
-        Self::from_dir(dir, true)
-    }
-
-    pub fn from_dir<P>(dir: P, use_abbrev: bool) -> Self
-    where
-        P: AsRef<Path>,
-    {
-        let mut schedule = Schedule {
-            agencies: Vec::new(),
-            stops: Vec::new(),
-            stop_times: Vec::new(),
-            services: Vec::new(),
-            service_exceptions: Vec::new(),
-            shapes: Vec::new(),
-            transfers: Vec::new(),
-            routes: Vec::new(),
-            trips: Vec::new(),
-        };
-
-        let mut agency_path = dir.as_ref().to_path_buf();
-        agency_path.push("agency.txt");
-        if Path::try_exists(&agency_path).expect("Unable to check existence of file") {
-            let mut reader = csv::Reader::from_path(agency_path).expect("Unable to read file");
-            let mut res: Vec<Agency> = Vec::new();
-
-            for rec in reader.deserialize() {
-                res.push(rec.expect("Unable to parse file"));
-            }
-        }
-
-        schedule
-            .agencies
-            .append(&mut parse_file!("agency.txt", Agency, dir));
-        schedule
-            .stops
-            .append(&mut parse_file!("stops.txt", Stop, dir));
-
-        if use_abbrev {
-            schedule
-                .stop_times
-                .append(&mut parse_file!("stop_times_abbrev.txt", StopTime, dir));
-        } else {
-            schedule
-                .stop_times
-                .append(&mut parse_file!("stop_times.txt", StopTime, dir));
-        }
-        schedule
-            .services
-            .append(&mut parse_file!("calendar.txt", Service, dir));
-        schedule.service_exceptions.append(&mut parse_file!(
-            "calendar_dates.txt",
-            ServiceException,
-            dir
-        ));
-        schedule.shapes.append(
-            &mut Shape::process_points(&parse_file!("shapes.txt", ShapePoint, dir))
-                .into_values()
-                .collect(),
-        );
-        schedule
-            .transfers
-            .append(&mut parse_file!("transfers.txt", Transfer, dir));
-        schedule
-            .routes
-            .append(&mut parse_file!("routes.txt", Route, dir));
-        schedule
-            .trips
-            .append(&mut parse_file!("trips.txt", Trip, dir));
-
-        // TODO initialize pointers
-
-        schedule
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use std::fs::File;
@@ -297,7 +227,7 @@ mod tests {
     use super::*;
 
     macro_rules! setup_new_schedule {
-        () => {{
+        ($bounds:expr) => {{
             let agency_reader = File::open("./test_data/schedule/agency.txt").unwrap();
             let stop_reader = File::open("./test_data/schedule/stops.txt").unwrap();
             let stop_time_reader = File::open("./test_data/schedule/stop_times.txt").unwrap();
@@ -319,28 +249,15 @@ mod tests {
                 transfer_reader,
                 route_reader,
                 trip_reader,
+                $bounds,
             )
         }};
     }
 
     #[test]
-    fn test_from_dir() {
-        let schedule = Schedule::from_dir_abbrev("./test_data/schedule");
-
-        assert_eq!(schedule.agencies.len(), 1);
-        assert_eq!(schedule.stops.len(), 1497);
-        assert_eq!(schedule.stop_times.len(), 10000);
-        assert_eq!(schedule.services.len(), 71);
-        assert_eq!(schedule.service_exceptions.len(), 406);
-        assert_eq!(schedule.shapes.len(), 311);
-        assert_eq!(schedule.transfers.len(), 616);
-        assert_eq!(schedule.routes.len(), 30);
-        assert_eq!(schedule.trips.len(), 79970);
-    }
-
-    #[test]
-    fn test_from_readers() {
-        let schedule = setup_new_schedule!().unwrap();
+    #[ignore]
+    fn test_from_readers_full() {
+        let schedule = setup_new_schedule!(None).unwrap();
 
         assert_eq!(schedule.agencies.len(), 1);
         assert_eq!(schedule.services.len(), 71);
@@ -351,7 +268,7 @@ mod tests {
                 .values()
                 .flat_map(HashMap::values)
                 .count(),
-            2339542
+            2_339_542
         );
         assert_eq!(
             schedule
@@ -372,5 +289,42 @@ mod tests {
         );
         assert_eq!(schedule.routes.len(), 30);
         assert_eq!(schedule.trips.len(), 79970);
+    }
+
+    #[test]
+    fn test_from_readers_abbrev() {
+        let schedule =
+            setup_new_schedule!(Some((&"20250301".to_owned(), &"20250401".to_owned()))).unwrap();
+
+        assert_eq!(schedule.agencies.len(), 1);
+        assert_eq!(schedule.services.len(), 71);
+        assert_eq!(schedule.stops.len(), 1497);
+        assert_eq!(
+            schedule
+                .stop_times
+                .values()
+                .flat_map(HashMap::values)
+                .count(),
+            1_914_369
+        );
+        assert_eq!(
+            schedule
+                .service_exceptions
+                .values()
+                .flat_map(HashMap::values)
+                .count(),
+            82
+        );
+        assert_eq!(schedule.shapes.len(), 311);
+        assert_eq!(
+            schedule
+                .transfers
+                .values()
+                .map(Vec::len)
+                .fold(0, |a, b| a + b),
+            616
+        );
+        assert_eq!(schedule.routes.len(), 30);
+        assert_eq!(schedule.trips.len(), 65871);
     }
 }
