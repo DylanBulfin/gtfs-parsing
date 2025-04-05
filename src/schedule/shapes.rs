@@ -39,13 +39,11 @@ pub struct Shape {
 }
 
 impl Shape {
-    pub fn process_points(points: &Vec<ShapePoint>) -> Vec<Self> {
+    pub fn process_points(points: &Vec<ShapePoint>) -> HashMap<String, Self> {
         let mut map = HashMap::new();
 
         for point in points {
-            let id = &point.shape_id;
-
-            match map.entry(id) {
+            match map.entry(point.shape_id.clone()) {
                 Entry::Occupied(mut e) => {
                     let shape: &mut Shape = (e.get_mut());
 
@@ -53,14 +51,14 @@ impl Shape {
                 }
                 Entry::Vacant(mut e) => {
                     e.insert(Shape {
-                        shape_id: id.to_string(),
+                        shape_id: point.shape_id.clone(),
                         points: Vec::new(),
                     });
                 }
             }
         }
 
-        map.into_values().collect()
+        map
     }
 }
 
@@ -105,7 +103,7 @@ mod tests {
 
         assert_eq!(res.len(), 176482);
 
-        let mut shapes = Shape::process_points(&res);
+        let mut shapes: Vec<Shape> = Shape::process_points(&res).into_values().collect();
         shapes.sort_by_key(|s| s.shape_id.to_owned());
 
         assert_eq!(shapes.len(), 311);

@@ -111,7 +111,7 @@ mod tests {
         assert_eq!(mta.stop_id, Some("135N".to_owned()));
         assert_eq!(mta.location_group_id, None);
         assert_eq!(mta.location_id, None);
-        assert_eq!(mta.stop_sequence, Some(6));
+        assert_eq!(mta.stop_sequence, 6);
         assert_eq!(mta.stop_headsign, None);
         assert_eq!(mta.start_pickup_drop_off_window, None);
         assert_eq!(mta.end_pickup_drop_off_window, None);
