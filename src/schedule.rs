@@ -293,8 +293,8 @@ mod tests {
 
     #[test]
     fn test_from_readers_abbrev() {
-        let schedule =
-            setup_new_schedule!(Some((&"20250301".to_owned(), &"20250401".to_owned()))).unwrap();
+        let (start, end) = ("20250301".to_owned(), "20250401".to_owned());
+        let schedule = setup_new_schedule!(Some((&start, &end))).unwrap();
 
         assert_eq!(schedule.agencies.len(), 1);
         assert_eq!(schedule.services.len(), 71);
@@ -326,5 +326,25 @@ mod tests {
         );
         assert_eq!(schedule.routes.len(), 30);
         assert_eq!(schedule.trips.len(), 65871);
+
+        for (service_id, service) in schedule.services.iter() {
+            assert!(service.start_date <= end && service.end_date >= start);
+        }
+        for (service_id, except_map) in schedule.service_exceptions.iter() {
+            for (date, service) in except_map {
+                assert!(date >= &start && date <= &end);
+            }
+        }
+        for (trip_id, trip) in schedule.trips.iter() {
+            assert!(
+                schedule.services.contains_key(&trip.service_id)
+                    || schedule.service_exceptions.contains_key(&trip.service_id)
+            );
+        }
+        for (trip_id, stop_time_map) in schedule.stop_times {
+            for (stop_seq, stop_time) in stop_time_map {
+                assert!(schedule.trips.contains_key(&trip_id));
+            }
+        }
     }
 }
