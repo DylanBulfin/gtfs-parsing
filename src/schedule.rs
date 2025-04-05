@@ -267,6 +267,7 @@ impl Schedule {
     where
         R: Read,
     {
+        // It's important that they get called in order (more or less)
         let agencies = parse_agencies(agency_reader);
         let stops = parse_stops(stop_reader);
         let services = parse_services(service_reader, date_bounds);
