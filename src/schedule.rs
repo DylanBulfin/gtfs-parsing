@@ -295,6 +295,8 @@ impl Schedule {
 mod tests {
     use std::fs::File;
 
+    use crate::schedule::calendar::ExceptionType;
+
     use super::*;
 
     macro_rules! setup_new_schedule {
@@ -347,7 +349,7 @@ mod tests {
                 .values()
                 .flat_map(HashMap::values)
                 .count(),
-            299
+            406
         );
         assert_eq!(schedule.shapes.len(), 311);
         assert_eq!(
@@ -385,7 +387,7 @@ mod tests {
                 .values()
                 .flat_map(HashMap::values)
                 .count(),
-            82
+            167
         );
         assert_eq!(schedule.shapes.len(), 311);
         assert_eq!(
@@ -444,6 +446,33 @@ mod tests {
                 .flat_map(HashMap::values)
                 .count(),
             48
+        );
+        // Check that all service exceptions on this day are "removed"
+        assert_eq!(
+            schedule
+                .service_exceptions
+                .values()
+                .map(|m| m.get("20250217"))
+                .filter(|se| matches!(
+                    se,
+                    Some(ServiceException {
+                        exception_type: ExceptionType::Removed,
+                        ..
+                    })
+                ))
+                .count(),
+            schedule
+                .service_exceptions
+                .values()
+                .flat_map(HashMap::values)
+                .filter(|se| matches!(
+                    se,
+                    ServiceException {
+                        exception_type: ExceptionType::Removed,
+                        ..
+                    }
+                ))
+                .count(),
         );
         assert_eq!(schedule.shapes.len(), 311);
         assert_eq!(
