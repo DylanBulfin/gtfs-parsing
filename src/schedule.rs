@@ -99,7 +99,7 @@ pub struct Schedule {
     pub agencies: Vec<Agency>,
     // Indexed by stop_id
     pub stops: HashMap<String, Stop>,
-    // Indexed by stop_id, then stop_sequence
+    // Indexed by trip_id, then stop_sequence
     pub stop_times: HashMap<String, HashMap<u32, StopTime>>,
     // Indexed by service_id
     pub services: HashMap<String, Service>,
