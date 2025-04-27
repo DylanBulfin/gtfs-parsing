@@ -23,7 +23,7 @@ impl From<&ShapePoint> for ShapePointData {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ShapePoint {
     pub shape_id: String,
     pub shape_pt_sequence: u32,
@@ -32,7 +32,7 @@ pub struct ShapePoint {
     pub shape_dist_traveled: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Shape {
     pub shape_id: String,
     pub points: Vec<ShapePointData>,

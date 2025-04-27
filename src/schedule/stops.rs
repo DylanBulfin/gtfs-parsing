@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum LocationType {
     StopPlatform,
@@ -23,7 +23,7 @@ impl From<u32> for LocationType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum WheelchairBoarding {
     NoInfo,
@@ -42,7 +42,7 @@ impl From<u32> for WheelchairBoarding {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 pub struct Stop {
     pub stop_id: String,
     pub stop_code: Option<String>,

@@ -91,7 +91,7 @@ macro_rules! parse_reader {
     }};
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 /// This struct stores things in maps which allows for far more efficient parsing into a natural,
 /// hierarchical format
 pub struct Schedule {

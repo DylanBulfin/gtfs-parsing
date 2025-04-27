@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use super::agency::Agency;
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum RouteType {
     LightRail,
@@ -35,7 +35,7 @@ impl From<u32> for RouteType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum ContinuousType {
     Continuous,
@@ -56,7 +56,7 @@ impl From<u32> for ContinuousType {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Route {
     pub route_id: String,
     pub agency_id: Option<String>,

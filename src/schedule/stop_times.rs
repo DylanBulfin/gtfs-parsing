@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 use super::{stops::Stop, trips::Trip};
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum DropoffType {
     Dropoff,
@@ -25,7 +25,7 @@ impl From<u32> for DropoffType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum PickupType {
     Pickup,
@@ -46,7 +46,7 @@ impl From<u32> for PickupType {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 #[serde(from = "u32")]
 pub enum Timepoint {
     Approximate,
@@ -63,7 +63,7 @@ impl From<u32> for Timepoint {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct StopTime {
     pub trip_id: String,
     pub arrival_time: Option<String>,
